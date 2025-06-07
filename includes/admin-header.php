@@ -19,6 +19,7 @@ $settings = $stmt->fetch();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>" type="image/png">
     <title>Admin Panel - Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? '2023/2024'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">

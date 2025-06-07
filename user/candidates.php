@@ -21,22 +21,48 @@ $candidates = $stmt->fetchAll();
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
 <style>
+    .min-h-screen {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+        url('<?php echo !empty($settings['background']) ? '../uploads/' . htmlspecialchars($settings['background']) : 'https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg'; ?>');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        position: relative;
+    }
+
+    .min-h-screen::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
     .candidate-card {
         transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 1;
     }
+
     .candidate-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
     }
+
     .candidate-image-container {
         position: relative;
         width: 100%;
         padding-top: 100%;
         overflow: hidden;
+        border-radius: 1rem 1rem 0 0;
     }
+
     .candidate-image {
         position: absolute;
         top: 0;
@@ -46,14 +72,29 @@ $candidates = $stmt->fetchAll();
         object-fit: cover;
         transition: all 0.3s ease;
     }
+
     .candidate-card:hover .candidate-image {
         transform: scale(1.05);
     }
+
+    .candidate-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1.5rem;
+        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        color: white;
+        border-radius: 0 0 1rem 1rem;
+    }
+
     .vote-button {
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
+
     .vote-button::before {
         content: '';
         position: absolute;
@@ -66,18 +107,23 @@ $candidates = $stmt->fetchAll();
         transform: translate(-50%, -50%);
         transition: width 0.6s ease, height 0.6s ease;
     }
+
     .vote-button:hover::before {
         width: 300px;
         height: 300px;
     }
+
     .vote-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
+
     .section-title {
         position: relative;
         display: inline-block;
+        color: white;
     }
+
     .section-title::after {
         content: '';
         position: absolute;
@@ -86,20 +132,39 @@ $candidates = $stmt->fetchAll();
         transform: translateX(-50%);
         width: 50px;
         height: 3px;
-        background: linear-gradient(90deg, #3B82F6, #2563EB);
+        background: linear-gradient(90deg, #10B981, #059669);
         border-radius: 3px;
     }
-    .candidate-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
+
+    .content-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 1rem;
         padding: 1.5rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        color: white;
+        margin-bottom: 1.5rem;
     }
-    
-    /* Custom style untuk SweetAlert2 */
+
+    .content-section h3 {
+        color: #1F2937;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .content-section p {
+        color: #4B5563;
+        line-height: 1.6;
+    }
+
+    .disabled-button {
+        background: #9CA3AF;
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    .disabled-button:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
     .swal2-popup {
         border-radius: 1rem !important;
         padding: 1.5rem !important;
@@ -175,17 +240,17 @@ $candidates = $stmt->fetchAll();
     }
 </style>
 
-<div class="min-h-screen bg-gray-50 py-12">
+<div class="min-h-screen py-12">
     <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto">
             <!-- Header Section -->
             <div class="text-center mb-16" data-aos="fade-down">
-                <h1 class="text-4xl font-bold text-gray-800 mb-4 section-title">Kandidat Ketua OSIS</h1>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                <h1 class="text-4xl font-bold text-white mb-4 section-title">Kandidat Ketua OSIS</h1>
+                <p class="text-lg text-gray-200 max-w-2xl mx-auto">
                     Pilih kandidat yang menurut Anda memiliki visi dan misi terbaik untuk memimpin OSIS
                 </p>
             </div>
-            
+        
             <!-- Candidates Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <?php foreach ($candidates as $index => $candidate): ?>
@@ -194,8 +259,8 @@ $candidates = $stmt->fetchAll();
                      data-aos-delay="<?php echo $index * 100; ?>">
                     <!-- Image Container -->
                     <div class="candidate-image-container">
-                        <img src="../assets/images/candidates/<?php echo htmlspecialchars($candidate['foto']); ?>" 
-                             alt="<?php echo htmlspecialchars($candidate['nama']); ?>" 
+                <img src="../assets/images/candidates/<?php echo htmlspecialchars($candidate['foto']); ?>" 
+                     alt="<?php echo htmlspecialchars($candidate['nama']); ?>" 
                              class="candidate-image">
                         <div class="candidate-info">
                             <h2 class="text-2xl font-bold mb-1"><?php echo htmlspecialchars($candidate['nama']); ?></h2>
@@ -204,43 +269,43 @@ $candidates = $stmt->fetchAll();
                             </p>
                         </div>
                     </div>
-
+                    
                     <!-- Content -->
                     <div class="p-6">
-                        <div class="mb-6">
-                            <h3 class="font-semibold text-gray-800 mb-2 flex items-center">
-                                <i class="fas fa-bullseye text-blue-500 mr-2"></i>Visi
+                        <div class="content-section">
+                            <h3 class="flex items-center">
+                                <i class="fas fa-bullseye text-green-500 mr-2"></i>Visi
                             </h3>
-                            <p class="text-gray-600 text-sm"><?php echo nl2br(htmlspecialchars($candidate['visi'])); ?></p>
+                            <p class="text-sm"><?php echo nl2br(htmlspecialchars($candidate['visi'])); ?></p>
                         </div>
                         
-                        <div class="mb-6">
-                            <h3 class="font-semibold text-gray-800 mb-2 flex items-center">
+                        <div class="content-section">
+                            <h3 class="flex items-center">
                                 <i class="fas fa-tasks text-green-500 mr-2"></i>Misi
                             </h3>
-                            <p class="text-gray-600 text-sm"><?php echo nl2br(htmlspecialchars($candidate['misi'])); ?></p>
-                        </div>
-                        
-                        <?php if (!$user['has_voted']): ?>
-                        <form action="vote.php" method="POST" class="text-center" onsubmit="return confirmVote(event)">
-                            <input type="hidden" name="candidate_id" value="<?php echo $candidate['id']; ?>">
-                            <button type="submit" 
-                                    class="vote-button bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg w-full">
-                                <i class="fas fa-vote-yea mr-2"></i>Pilih Kandidat
-                            </button>
-                        </form>
-                        <?php else: ?>
-                        <button disabled 
-                                class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg w-full cursor-not-allowed flex items-center justify-center">
-                            <i class="fas fa-check-circle mr-2"></i>Anda Sudah Memilih
-                        </button>
-                        <?php endif; ?>
+                            <p class="text-sm"><?php echo nl2br(htmlspecialchars($candidate['misi'])); ?></p>
                     </div>
+                    
+                    <?php if (!$user['has_voted']): ?>
+                            <form action="vote.php" method="POST" class="text-center" onsubmit="return confirmVote(event)">
+                        <input type="hidden" name="candidate_id" value="<?php echo $candidate['id']; ?>">
+                                <button type="submit" 
+                                        class="vote-button text-white font-bold py-3 px-6 rounded-lg w-full">
+                                    <i class="fas fa-vote-yea mr-2"></i>Pilih Kandidat
+                        </button>
+                    </form>
+                    <?php else: ?>
+                            <button disabled 
+                                    class="disabled-button text-white font-bold py-3 px-6 rounded-lg w-full flex items-center justify-center">
+                                <i class="fas fa-check-circle mr-2"></i>Anda Sudah Memilih
+                    </button>
+                    <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
+            <?php endforeach; ?>
         </div>
     </div>
+</div>
 </div>
 
 <script>

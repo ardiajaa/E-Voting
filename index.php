@@ -6,7 +6,7 @@ $stmt = $pdo->query("SELECT * FROM settings ORDER BY id DESC LIMIT 1");
 $settings = $stmt->fetch();
 
 // Ambil data kandidat
-$stmt = $pdo->query("SELECT * FROM candidates ORDER BY id DESC");
+$stmt = $pdo->query("SELECT * FROM candidates");
 $candidates = $stmt->fetchAll();
 
 // Ambil pengaturan waktu voting
@@ -41,7 +41,8 @@ if ($voting_time) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemilihan OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?></title>
+    <link rel="icon" href="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>" type="image/png">
+    <title>Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -49,7 +50,7 @@ if ($voting_time) {
     <style>
         .hero-section {
             background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                        url('https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg');
+                 url('<?php echo !empty($settings['background']) ? '../uploads/' . htmlspecialchars($settings['background']) : 'https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg'; ?>');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -206,9 +207,9 @@ if ($voting_time) {
                          alt="Logo OSIS" 
                          class="h-32 w-auto mx-auto mb-8">
                 <?php endif; ?>
-                <h2 class="text-4xl font-bold mb-4">Pemilihan Ketua OSIS</h2>
+                <h2 class="text-4xl font-bold mb-4">Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?></h2>
                 <p class="text-xl mb-8 max-w-2xl mx-auto">
-                    Pilih pemimpin OSIS yang akan membawa perubahan positif untuk sekolah kita
+                    Pilih calon ketua OSIS yang memiliki visi jelas, integritas tinggi, dan komitmen untuk memajukan <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'sekolah kita'); ?>. Suara Anda menentukan masa depan OSIS!
                 </p>
                 <?php if ($can_vote): ?>
                     <a href="auth/login.php" 
@@ -231,7 +232,7 @@ if ($voting_time) {
     <!-- Visi Misi OSIS -->
     <section class="py-20">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12" data-aos="fade-up">Visi & Misi OSIS</h2>
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12" data-aos="fade-up">Visi & Misi OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- Visi -->
                 <div class="glass-card rounded-2xl shadow-xl p-8 card-hover" data-aos="fade-up" data-aos-delay="100">
@@ -259,7 +260,7 @@ if ($voting_time) {
     <!-- Kandidat Section -->
     <section class="py-20 bg-gray-50">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12" data-aos="fade-up">Kandidat Ketua OSIS</h2>
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12" data-aos="fade-up">Kandidat Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? '2023/2024'); ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <?php foreach ($candidates as $index => $candidate): ?>
                 <div class="card-hover glass-card rounded-2xl shadow-xl overflow-hidden" 

@@ -18,7 +18,7 @@ $settings = $stmt->fetch() ?? [
 <style>
     .hero-section {
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                    url('https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg');
+                    url('<?php echo !empty($settings['background']) ? '../uploads/' . htmlspecialchars($settings['background']) : 'https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg'; ?>');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;

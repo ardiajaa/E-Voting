@@ -53,60 +53,105 @@ if (isset($_GET['download'])) {
 require_once '../includes/admin-header.php';
 ?>
 
-<!-- Tambahkan AOS CSS dan JS -->
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
 <style>
 .page-container {
     min-height: calc(100vh - 4rem);
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                url('https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    padding: 2rem 0;
+    background-color: #f3f4f6;
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    .page-container {
+        padding: 2rem;
+    }
 }
 
 .content-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
+    padding: 1.5rem;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+@media (min-width: 640px) {
+    .content-card {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .content-card {
+        padding: 2.5rem;
+    }
 }
 
 .content-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .page-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 1.5rem;
     position: relative;
     display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .page-title {
+        font-size: 1.75rem;
+        text-align: left;
+        width: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
 }
 
 .page-title::after {
     content: '';
     position: absolute;
     bottom: -0.5rem;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 3rem;
     height: 0.25rem;
     background: linear-gradient(90deg, #3b82f6, #2563eb);
     border-radius: 0.25rem;
 }
 
+@media (min-width: 640px) {
+    .page-title::after {
+        left: 0;
+        transform: none;
+    }
+}
+
 .description {
     color: #4b5563;
-    font-size: 1.125rem;
-    line-height: 1.75;
-    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .description {
+        font-size: 1rem;
+        line-height: 1.75;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
 }
 
 .feature-list {
@@ -118,11 +163,18 @@ require_once '../includes/admin-header.php';
 .feature-item {
     display: flex;
     align-items: center;
-    padding: 1rem 0;
+    padding: 0.75rem 0;
     color: #4b5563;
-    font-size: 1.125rem;
+    font-size: 0.875rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+    .feature-item {
+        font-size: 1rem;
+        padding: 1rem 0;
+    }
 }
 
 .feature-item:last-child {
@@ -135,11 +187,20 @@ require_once '../includes/admin-header.php';
 }
 
 .feature-icon {
-    width: 2rem;
-    height: 2rem;
-    margin-right: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.75rem;
     color: #3b82f6;
     transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+    .feature-icon {
+        width: 2rem;
+        height: 2rem;
+        margin-right: 1rem;
+    }
 }
 
 .feature-item:hover .feature-icon {
@@ -149,34 +210,25 @@ require_once '../includes/admin-header.php';
 .download-button {
     display: inline-flex;
     align-items: center;
-    padding: 1rem 2rem;
+    justify-content: center;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
     font-weight: 600;
-    font-size: 1.125rem;
-    border-radius: 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-    position: relative;
-    overflow: hidden;
 }
 
-.download-button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-}
-
-.download-button:hover::before {
-    width: 300px;
-    height: 300px;
+@media (min-width: 640px) {
+    .download-button {
+        width: auto;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        border-radius: 1rem;
+    }
 }
 
 .download-button:hover {
@@ -185,69 +237,87 @@ require_once '../includes/admin-header.php';
 }
 
 .download-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: 0.75rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
     transition: transform 0.3s ease;
+}
+
+@media (min-width: 640px) {
+    .download-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: 0.75rem;
+    }
 }
 
 .download-button:hover .download-icon {
     transform: translateY(2px);
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-    .page-container {
-        padding: 1rem 0;
-    }
-    
-    .content-card {
-        margin: 0 1rem;
-        border-radius: 1rem;
-    }
-    
-    .page-title {
-        font-size: 1.5rem;
-    }
-    
-    .description {
-        font-size: 1rem;
-    }
-    
-    .feature-item {
-        font-size: 1rem;
-        padding: 0.75rem 0;
-    }
-    
-    .download-button {
-        width: 100%;
-        justify-content: center;
-        padding: 0.875rem 1.5rem;
-        font-size: 1rem;
+/* Container responsive */
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
     }
 }
 
-@media (max-width: 480px) {
-    .page-title {
-        font-size: 1.25rem;
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+    .content-card:hover {
+        transform: none;
     }
     
-    .feature-icon {
-        width: 1.5rem;
-        height: 1.5rem;
+    .feature-item:hover {
+        transform: none;
+    }
+    
+    .download-button:hover {
+        transform: none;
+    }
+    
+    .download-button:active {
+        transform: translateY(1px);
     }
 }
 </style>
-
+        
 <div class="page-container">
-    <div class="container mx-auto px-4">
-        <div class="content-card p-8" data-aos="fade-up">
+    <div class="container">
+        <div class="content-card" data-aos="fade-up">
             <h2 class="page-title">Download Template Import User</h2>
-            
+
             <p class="description" data-aos="fade-up" data-aos-delay="100">
-                Download template Excel untuk import data user. Template ini berisi kolom-kolom yang diperlukan untuk memudahkan proses import data user secara massal.
+                Download template Excel untuk import data user. Template ini berisi kolom-kolom yang diperlukan untuk
+                memudahkan proses import data user secara massal.
             </p>
-            
+
             <ul class="feature-list">
                 <li class="feature-item" data-aos="fade-up" data-aos-delay="200">
                     <i class="fas fa-id-card feature-icon"></i>
@@ -266,7 +336,7 @@ require_once '../includes/admin-header.php';
                     <span>Absen - Nomor absen siswa</span>
                 </li>
             </ul>
-            
+
             <a href="?download=1" class="download-button" data-aos="fade-up" data-aos-delay="600">
                 <i class="fas fa-download download-icon"></i>
                 <span>Download Template Excel</span>
@@ -276,19 +346,24 @@ require_once '../includes/admin-header.php';
 </div>
 
 <script>
-// Inisialisasi AOS
+// Inisialisasi AOS dengan konfigurasi yang lebih baik untuk mobile
 AOS.init({
     duration: 800,
     once: true,
-    offset: 50
+    offset: 50,
+    disable: window.innerWidth < 640 ? true : false,
+    startEvent: 'DOMContentLoaded'
 });
 
-// Animasi untuk elemen
-document.addEventListener('DOMContentLoaded', function() {
-    const elements = document.querySelectorAll('[data-aos]');
-    elements.forEach((element, index) => {
-        element.style.animationDelay = `${(index + 1) * 0.1}s`;
-    });
+// Optimasi untuk touch devices
+document.addEventListener('DOMContentLoaded', function () {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice) {
+        document.querySelectorAll('.feature-item, .download-button').forEach(element => {
+            element.style.cursor = 'pointer';
+        });
+    }
 });
 </script>
 

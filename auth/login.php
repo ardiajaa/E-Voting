@@ -8,11 +8,27 @@ ini_set('session.cookie_samesite', 'Lax');
 // Mulai session
 session_start();
 
+// Cek jika user sudah login
+if (isset($_SESSION['user_id'])) {
+    header('Location: ../user/index.php');
+    exit();
+}
+
+// Cek jika admin sudah login
+if (isset($_SESSION['admin_id'])) {
+    header('Location: ../admin/index.php');
+    exit();
+}
+
 require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $location = getLocationFromIP($ip_address);
+    $device = getDeviceInfo($user_agent);
     
     // Cek login admin
     if (strpos($email, '@') !== false) {
@@ -23,8 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['role'] = 'admin';
+
+            // Catat login berhasil
+            $stmt = $pdo->prepare("INSERT INTO login_history (user_id, user_type, ip_address, location, device, user_agent, attempted_email, status) VALUES (?, 'admin', ?, ?, ?, ?, ?, 'success')");
+            $stmt->execute([$user['id'], $ip_address, $location, $device, $user_agent, $email]);
+
             header('Location: ./../admin/index.php');
             exit();
+        } else {
+            // Catat login gagal
+            $reason = !$user ? "Email tidak ditemukan" : "Password salah";
+            $stmt = $pdo->prepare("INSERT INTO login_history (user_type, ip_address, location, device, user_agent, attempted_email, status, reason) VALUES ('admin', ?, ?, ?, ?, ?, 'failed', ?)");
+            $stmt->execute([$ip_address, $location, $device, $user_agent, $email, $reason]);
         }
     } else {
         // Cek login user biasa
@@ -35,12 +61,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = 'user';
+
+            // Catat login berhasil
+            $stmt = $pdo->prepare("INSERT INTO login_history (user_id, user_type, ip_address, location, device, user_agent, attempted_email, status) VALUES (?, 'user', ?, ?, ?, ?, ?, 'success')");
+            $stmt->execute([$user['id'], $ip_address, $location, $device, $user_agent, $email]);
+
             header('Location: ./../user/index.php');
             exit();
+        } else {
+            // Catat login gagal
+            $reason = !$user ? "NIS tidak ditemukan" : "Password salah";
+            $stmt = $pdo->prepare("INSERT INTO login_history (user_type, ip_address, location, device, user_agent, attempted_email, status, reason) VALUES ('user', ?, ?, ?, ?, ?, 'failed', ?)");
+            $stmt->execute([$ip_address, $location, $device, $user_agent, $email, $reason]);
         }
     }
     
     $error = "Email/NIS atau password salah!";
+}
+
+// Fungsi untuk mendapatkan lokasi dari IP
+function getLocationFromIP($ip) {
+    if ($ip == '127.0.0.1' || $ip == '::1') {
+        return 'Localhost';
+    }
+    
+    $url = "http://ip-api.com/json/" . $ip;
+    $response = @file_get_contents($url);
+    
+    if ($response) {
+        $data = json_decode($response);
+        if ($data && $data->status == 'success') {
+            return $data->city . ', ' . $data->country;
+        }
+    }
+    
+    return 'Unknown Location';
+}
+
+// Fungsi untuk mendapatkan informasi perangkat
+function getDeviceInfo($userAgent) {
+    $device = 'Unknown';
+    
+    if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i', $userAgent)) {
+        $device = 'Mobile';
+    } elseif (preg_match('/tablet|ipad|playbook|silk/i', $userAgent)) {
+        $device = 'Tablet';
+    } elseif (preg_match('/windows|macintosh|linux/i', $userAgent)) {
+        $device = 'Desktop';
+    }
+    
+    return $device;
 }
 
 // Ambil data settings
@@ -53,13 +123,14 @@ $settings = $stmt->fetch();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>" type="image/png">
     <title>Login - Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? ''); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .bg-image {
-            background-image: url('https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg');
+            background-image: url('<?php echo !empty($settings['background']) ? '../uploads/' . htmlspecialchars($settings['background']) : 'https://smkn1cermegresik.sch.id/wp-content/uploads/2020/11/Lapangan.jpg'; ?>');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -129,6 +200,21 @@ $settings = $stmt->fetch();
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3B82F6;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .back-button:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            transform: translateX(-4px);
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -145,8 +231,8 @@ $settings = $stmt->fetch();
                 <?php endif; ?>
 
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Selamat Datang</h1>
-                    <p class="text-gray-600">Silakan login untuk melanjutkan</p>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Pemilihan Ketua OSIS<h1>
+                    <p class="text-gray-600"><?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> - <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? '2023/2024'); ?></p>
                 </div>
                 
                 <?php if (isset($error)): ?>
@@ -193,9 +279,12 @@ $settings = $stmt->fetch();
 
                 <div class="mt-6 text-center">
                     <p class="text-sm text-gray-600">
-                        <?php echo htmlspecialchars($settings['nama_sekolah'] ?? ''); ?> - 
-                        Periode <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?>
+                        &copy; <?php echo date('Y'); ?> <a href="https://github.com/ardiajaa" target="_blank" class="hover:text-blue-600 transition-colors duration-200">Achmad Rizky Putra Ardianto</a>.
                     </p>
+                    <a href="../" class="back-button">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Kembali ke Beranda</span>
+                    </a>
                 </div>
             </div>
         </div>

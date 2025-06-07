@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Tambahkan output buffering di awal file
 require_once '../includes/admin-header.php';
 require_once '../config/database.php';
 
@@ -36,12 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([$nama, $kelas, $absen, $visi, $misi, $foto]);
     }
     
+    ob_end_clean(); // Bersihkan output buffer sebelum redirect
     header('Location: edit-candidates.php');
     exit();
 }
 
 // Ambil data kandidat
-$stmt = $pdo->query("SELECT * FROM candidates ORDER BY id DESC");
+$stmt = $pdo->query("SELECT * FROM candidates");
 $candidates = $stmt->fetchAll();
 ?>
 
@@ -198,8 +200,12 @@ $candidates = $stmt->fetchAll();
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="foto">
                     Foto
                 </label>
+                <div class="mb-3">
+                    <img id="preview_foto" src="#" alt="Preview" class="hidden w-32 h-32 object-cover rounded-lg mb-2">
+                </div>
                 <input type="file" name="foto" id="foto" accept="image/*" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       onchange="previewImage(this, 'preview_foto')">
                 <p class="text-sm text-gray-500 mt-1">Format yang didukung: JPG, PNG. Ukuran maksimal: 2MB</p>
             </div>
             
@@ -277,8 +283,12 @@ $candidates = $stmt->fetchAll();
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="edit_foto">
                     Foto (Opsional)
                 </label>
+                <div class="mb-3">
+                    <img id="preview_edit_foto" src="#" alt="Preview" class="hidden w-32 h-32 object-cover rounded-lg mb-2">
+                </div>
                 <input type="file" name="foto" id="edit_foto" accept="image/*"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       onchange="previewImage(this, 'preview_edit_foto')">
                 <p class="text-sm text-gray-500 mt-1">Format yang didukung: JPG, PNG. Ukuran maksimal: 2MB</p>
             </div>
             
@@ -319,11 +329,31 @@ function editCandidate(candidate) {
     document.getElementById('edit_absen').value = candidate.absen;
     document.getElementById('edit_visi').value = candidate.visi;
     document.getElementById('edit_misi').value = candidate.misi;
+    
+    // Tampilkan preview foto saat ini
+    const previewEditFoto = document.getElementById('preview_edit_foto');
+    previewEditFoto.src = '../assets/images/candidates/' + candidate.foto;
+    previewEditFoto.classList.remove('hidden');
+    
     document.getElementById('editCandidateModal').classList.remove('hidden');
 }
 
 function closeEditModal() {
     document.getElementById('editCandidateModal').classList.add('hidden');
+}
+
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 // Tutup modal saat klik di luar modal

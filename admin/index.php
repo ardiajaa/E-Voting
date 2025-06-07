@@ -65,6 +65,19 @@ if ($voting_time) {
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <style>
+/* Custom style untuk background */
+.min-h-screen {
+    background: #f3f4f6;
+    position: relative;
+}
+
+/* Custom style untuk card */
+.bg-white {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 /* Custom style untuk notifikasi */
 .notification-container {
     position: fixed;
