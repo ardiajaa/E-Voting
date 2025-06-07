@@ -1,0 +1,205 @@
+# E-Voting System for School Organization (OSIS)
+
+A comprehensive and secure electronic voting system built with PHP, specifically designed for school organization (OSIS) elections. This system provides a modern, user-friendly interface with real-time voting statistics and secure authentication.
+
+## 🌟 Key Features
+
+### 1. Authentication System
+- **Multi-role Access**
+  - Admin dashboard with full control
+  - Student voting interface
+  - Secure login system
+- **Security Features**
+  - Password encryption using PHP's password_hash()
+  - Login history tracking
+  - IP and device detection
+  - Session management
+  - CSRF protection
+
+### 2. Voting Management
+- **Real-time Voting**
+  - Live vote counting
+  - Progress tracking
+  - Vote verification
+  - Election period settings
+- **Candidate Management**
+  - Add/Edit/Delete candidates
+  - Upload candidate photos
+  - Manage candidate profiles
+  - Track candidate statistics
+
+### 3. Dashboard Features
+- **Admin Dashboard**
+  - Real-time voting statistics
+  - Interactive charts and graphs
+  - Candidate performance tracking
+  - User management
+  - System settings
+- **Student Dashboard**
+  - Clean and intuitive interface
+  - Easy voting process
+  - Vote confirmation
+  - Profile management
+
+### 4. School Information
+- **Customizable Settings**
+  - School name and logo
+  - Academic year
+  - OSIS vision and mission
+  - Background customization
+  - Election period settings
+
+### 5. Responsive Design
+- **Mobile-First Approach**
+  - Fully responsive layout
+  - Touch-friendly interface
+  - Cross-browser compatibility
+  - Modern UI/UX design
+
+## 🛠️ Technical Stack
+
+### Backend
+- PHP 7.4+
+- MySQL Database
+- PDO for database operations
+- Session management
+- File handling
+
+### Frontend
+- HTML5/CSS3
+- JavaScript
+- Tailwind CSS
+- Font Awesome Icons
+- Chart.js for statistics
+- AOS (Animate On Scroll)
+
+### Security
+- Password hashing
+- SQL injection prevention
+- XSS protection
+- CSRF protection
+- Input validation
+- Session security
+
+## 📋 Installation
+
+1. **Clone the Repository**
+```bash
+git clone https://github.com/ardiajaa/E-Voting.git
+cd E-Voting
+```
+
+2. **Database Setup**
+```bash
+# Import database structure
+mysql -u username -p database_name < voting_osis.sql
+```
+
+3. **Configuration**
+- Open `config/database.php`
+- Update database credentials:
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'your_username');
+define('DB_PASS', 'your_password');
+define('DB_NAME', 'your_database');
+```
+
+4. **Web Server Setup**
+- Point your web server to the project directory
+- Ensure PHP and MySQL are installed
+- Set proper permissions for uploads directory
+
+5. **Initial Setup**
+- Access admin panel
+- Configure school settings
+- Add candidates
+- Set voting period
+
+## 🔒 Security Features
+
+### Authentication
+- Secure password hashing
+- Session management
+- Login attempt tracking
+- Device and IP logging
+
+### Data Protection
+- SQL injection prevention
+- XSS protection
+- CSRF tokens
+- Input sanitization
+- File upload validation
+
+### Access Control
+- Role-based access
+- Session timeout
+- Secure redirects
+- Error handling
+
+## 📱 Mobile Optimization
+
+### Responsive Design
+- Mobile-first approach
+- Touch-friendly interface
+- Adaptive layouts
+- Optimized images
+
+### Performance
+- Lazy loading
+- Image optimization
+- Caching
+- Minified assets
+
+## 🎨 UI/UX Features
+
+### Modern Interface
+- Clean and intuitive design
+- Smooth animations
+- Interactive elements
+- Progress indicators
+
+### User Experience
+- Easy navigation
+- Clear instructions
+- Responsive feedback
+- Error handling
+
+## 📊 Statistics and Reporting
+
+### Real-time Analytics
+- Vote counting
+- Progress tracking
+- Candidate statistics
+- User participation
+
+### Data Visualization
+- Interactive charts
+- Progress bars
+- Status indicators
+- Performance metrics
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👤 Contact
+
+Ardi Aja - [@ardiajaa](https://github.com/ardiajaa)
+
+Project Link: [https://github.com/ardiajaa/E-Voting](https://github.com/ardiajaa/E-Voting)
+
+## 🙏 Acknowledgments
+
+- [Tailwind CSS](https://tailwindcss.com) - For the amazing utility-first CSS framework
+- [Font Awesome](https://fontawesome.com) - For the beautiful icons
+- [Chart.js](https://www.chartjs.org) - For the interactive charts
+- [AOS](https://michalsnik.github.io/aos/) - For the scroll animations
