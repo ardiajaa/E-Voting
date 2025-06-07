@@ -2,6 +2,17 @@
 
 A comprehensive and secure electronic voting system built with PHP, specifically designed for school organization (OSIS) elections. This system provides a modern, user-friendly interface with real-time voting statistics and secure authentication.
 
+## 📸 Preview
+
+### Landing Page
+![Landing Page](https://github.com/ardiajaa/E-Voting/blob/main/preview1.png)
+
+### Admin Dashboard
+![Admin Dashboard](https://github.com/ardiajaa/E-Voting/blob/main/preview2.png)
+
+### User Dashboard
+![User Dashboard](https://github.com/ardiajaa/E-Voting/blob/main/preview3.png)
+
 ## 🌟 Key Features
 
 ### 1. Authentication System
@@ -99,10 +110,10 @@ mysql -u username -p database_name < voting_osis.sql
 - Open `config/database.php`
 - Update database credentials:
 ```php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'your_username');
-define('DB_PASS', 'your_password');
-define('DB_NAME', 'your_database');
+$host = 'localhost';
+$dbname = 'voting_osis';
+$username = 'root';
+$password = '';
 ```
 
 4. **Web Server Setup**
