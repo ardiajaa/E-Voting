@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 07, 2025 at 07:25 AM
+-- Generation Time: Jun 09, 2025 at 11:50 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -32,7 +32,7 @@ CREATE TABLE `admin` (
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin`
@@ -56,7 +56,7 @@ CREATE TABLE `candidates` (
   `misi` text,
   `foto` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `candidates`
@@ -85,7 +85,7 @@ CREATE TABLE `login_history` (
   `attempted_email` varchar(255) NOT NULL,
   `status` enum('success','failed') NOT NULL,
   `reason` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `login_history`
@@ -107,7 +107,20 @@ INSERT INTO `login_history` (`id`, `user_id`, `user_type`, `login_time`, `ip_add
 (26, NULL, 'admin', '2025-06-07 14:01:53', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'failed', 'Password salah'),
 (27, 1, 'admin', '2025-06-07 14:02:00', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL),
 (28, 32, 'user', '2025-06-07 14:12:23', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '11901/1101.005', 'success', NULL),
-(29, 1, 'admin', '2025-06-07 14:13:42', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL);
+(29, 1, 'admin', '2025-06-07 14:13:42', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL),
+(30, 4, 'user', '2025-06-07 14:33:46', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 CrKey/1.54.248666', '1', 'success', NULL),
+(31, 1, 'admin', '2025-06-07 14:36:59', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL),
+(32, NULL, 'user', '2025-06-09 18:19:23', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'failed', 'Password salah'),
+(33, NULL, 'admin', '2025-06-09 18:19:36', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'failed', 'Password salah'),
+(34, 1, 'admin', '2025-06-09 18:19:45', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL),
+(35, 33, 'user', '2025-06-09 18:20:11', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL),
+(36, 33, 'user', '2025-06-09 18:23:08', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL),
+(37, 33, 'user', '2025-06-09 18:25:43', '127.0.0.1', 'Localhost', 'Mobile', 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/17.5 Mobile/15A5370a Safari/602.1', '000', 'success', NULL),
+(38, 33, 'user', '2025-06-09 18:26:09', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL),
+(39, 1, 'admin', '2025-06-09 18:26:55', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'admin@admin.com', 'success', NULL),
+(40, 33, 'user', '2025-06-09 18:31:17', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL),
+(41, 33, 'user', '2025-06-09 18:32:08', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL),
+(42, 33, 'user', '2025-06-09 18:32:55', '127.0.0.1', 'Localhost', 'Desktop', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', '000', 'success', NULL);
 
 -- --------------------------------------------------------
 
@@ -125,7 +138,7 @@ CREATE TABLE `settings` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `background` varchar(255) DEFAULT NULL,
   `default_password` varchar(255) DEFAULT 'rahasia'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `settings`
@@ -145,7 +158,8 @@ INSERT INTO `settings` (`id`, `nama_sekolah`, `tahun_ajaran`, `visi`, `misi`, `l
 (11, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-06 13:20:25', NULL, 'rahasia'),
 (12, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-07 04:56:57', '', 'rahasia'),
 (13, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-07 04:58:31', 'bg_1749272311.jpg', 'rahasia'),
-(14, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-07 07:00:07', 'bg_1749272311.jpg', 'mahameru');
+(14, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-07 07:00:07', 'bg_1749272311.jpg', 'mahameru'),
+(15, 'SMKN 1 CERME', '2025/2026', '\"Meningkatkan mutu MTsN Gresik dan membentuk karakter siswa-siswi agar menjadi SMART (Sigap, Musyawarah, Adil, Religius, Teliti).\"', '1. Meningkatkan mutu prestasi, baik akademik maupun non akademik, melalui wadah organisasi.\r\n2. Menjadikan OSIS sebagai tempat untuk menyuarakan aspirasi siswa.\r\n3. Memperbaiki kedisiplinan dengan patuh pada peraturan yang berlaku.', 'logo_1749216025.png', '2025-06-09 11:17:58', 'bg_1749467878.jpg', 'mahameru');
 
 -- --------------------------------------------------------
 
@@ -163,7 +177,7 @@ CREATE TABLE `users` (
   `has_voted` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `role` enum('admin','user') DEFAULT 'user'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -174,7 +188,8 @@ INSERT INTO `users` (`id`, `nis`, `nama_lengkap`, `kelas`, `absen`, `password`, 
 (5, '2', 'Ardi 2', 'X TKJ 1', 2, '$2y$10$xbwmjhMQGXdDosoam1VO7ukJzQymOx8poLsl.2DqfMawSY0Lge4FG', 1, '2025-06-06 12:11:28', 'user'),
 (6, '3', 'Ardi 3', 'X TKJ 1', 3, '$2y$10$01HrmIzJjh6a7S4qlRDeFuCD1FKWMz0AstKumL.pVnYQxl62MuBMe', 1, '2025-06-06 12:11:28', 'user'),
 (8, '5', 'Ardi 5', 'X TKJ 1', 5, '$2y$10$Dotth9nww7tb.du56m.ND.WL6QLUdpHkNVjoPyxbZaWx9quxw3hbe', 1, '2025-06-06 12:11:29', 'user'),
-(10, '7', 'Ardi 7', 'X TKJ 1', 7, '$2y$10$jwgUfdjkScoXjwmxm3i5.uZDaWGEiV2ETTmKhAG86Y6hqsOGjgTf.', 1, '2025-06-06 12:11:29', 'user');
+(10, '7', 'Ardi 7', 'X TKJ 1', 7, '$2y$10$jwgUfdjkScoXjwmxm3i5.uZDaWGEiV2ETTmKhAG86Y6hqsOGjgTf.', 1, '2025-06-06 12:11:29', 'user'),
+(33, '000', 'Febri Cindy CIEEE', 'XII TKJ 2', 100, '$2y$12$6oYAy8TlEzVkNfGvL1paYeH0xiobQku6a6j13No2EaEmcJrsPH5PS', 0, '2025-06-09 11:17:35', 'user');
 
 -- --------------------------------------------------------
 
@@ -190,7 +205,7 @@ CREATE TABLE `user_sessions` (
   `user_agent` text NOT NULL,
   `last_activity` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -203,7 +218,7 @@ CREATE TABLE `votes` (
   `user_id` int DEFAULT NULL,
   `candidate_id` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `votes`
@@ -227,7 +242,7 @@ CREATE TABLE `voting_time` (
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `voting_time`
@@ -316,19 +331,19 @@ ALTER TABLE `candidates`
 -- AUTO_INCREMENT for table `login_history`
 --
 ALTER TABLE `login_history`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `votes`

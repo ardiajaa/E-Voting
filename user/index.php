@@ -9,11 +9,23 @@ $settings = $stmt->fetch() ?? [
     'tahun_ajaran' => '2023/2024',
     'visi_misi' => 'Visi dan Misi OSIS akan ditampilkan di sini'
 ];
+
+// Ambil data user yang login
+$user_id = $_SESSION['user_id'] ?? null;
+$user_data = null;
+if ($user_id) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_data = $stmt->fetch();
+}
 ?>
 
 <!-- Tambahkan AOS CSS dan JS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Tambahkan SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     .hero-section {
@@ -158,6 +170,104 @@ document.addEventListener('scroll', function() {
         }
     });
 });
+
+// Popup selamat datang
+<?php if ($user_data && isset($_SESSION['show_welcome']) && $_SESSION['show_welcome']): ?>
+Swal.fire({
+    title: 'Selamat Datang!',
+    html: `
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="fas fa-user-circle text-6xl text-blue-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2"><?php echo htmlspecialchars($user_data['nama_lengkap']); ?></h3>
+            <p class="text-gray-600 mb-1">
+                <span class="font-medium">Kelas:</span> <?php echo htmlspecialchars($user_data['kelas']); ?>
+            </p>
+            <p class="text-gray-600">
+                <span class="font-medium">Absen:</span> <?php echo htmlspecialchars($user_data['absen']); ?>
+            </p>
+        </div>
+    `,
+    icon: 'success',
+    showConfirmButton: true,
+    confirmButtonText: 'Lanjutkan',
+    confirmButtonColor: '#3B82F6',
+    timer: 5000,
+    timerProgressBar: true,
+    toast: false,
+    position: 'center',
+    showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+    },
+    customClass: {
+        popup: 'swal2-popup-custom',
+        title: 'swal2-title-custom',
+        htmlContainer: 'swal2-html-container-custom',
+        confirmButton: 'swal2-confirm-button-custom'
+    }
+});
+<?php 
+// Hapus flag setelah menampilkan popup
+unset($_SESSION['show_welcome']);
+endif; 
+?>
 </script>
+
+<style>
+/* Custom styles untuk SweetAlert2 */
+.swal2-popup-custom {
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    max-width: 90% !important;
+    width: 400px !important;
+}
+
+.swal2-title-custom {
+    font-size: 1.5rem !important;
+    color: #1F2937 !important;
+    margin-bottom: 1rem !important;
+}
+
+.swal2-html-container-custom {
+    margin: 1rem 0 !important;
+}
+
+.swal2-confirm-button-custom {
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.5rem !important;
+    background-color: #3B82F6 !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm-button-custom:hover {
+    background-color: #2563EB !important;
+    transform: translateY(-2px) !important;
+}
+
+@media (max-width: 640px) {
+    .swal2-popup-custom {
+        width: 90% !important;
+        padding: 1.5rem !important;
+    }
+    
+    .swal2-title-custom {
+        font-size: 1.25rem !important;
+    }
+    
+    .swal2-html-container-custom {
+        font-size: 0.875rem !important;
+    }
+    
+    .swal2-confirm-button-custom {
+        padding: 0.5rem 1.5rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+</style>
 
 <?php require_once '../includes/footer.php'; ?>

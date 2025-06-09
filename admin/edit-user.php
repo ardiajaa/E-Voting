@@ -10,11 +10,11 @@ if (isset($_GET['id'])) {
     $user = $stmt->fetch();
     
     if (!$user) {
-        header('Location: users.php');
+        echo "<script>window.location.href = 'users.php';</script>";
         exit();
     }
 } else {
-    header('Location: users.php');
+    echo "<script>window.location.href = 'users.php';</script>";
     exit();
 }
 
@@ -35,10 +35,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([$nis, $nama_lengkap, $kelas, $absen, $id]);
     }
     
-    header('Location: users.php');
+    // Set session untuk notifikasi
+    $_SESSION['success_message'] = "Data user berhasil diperbarui!";
+    
+    // Redirect menggunakan JavaScript
+    echo "<script>window.location.href = 'users.php';</script>";
     exit();
 }
 ?>
+
+<!-- Tambahkan SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Tambahkan AOS CSS dan JS -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -283,6 +290,17 @@ document.addEventListener('DOMContentLoaded', function() {
         group.style.animationDelay = `${index * 0.1}s`;
     });
 });
+
+// Tampilkan notifikasi jika ada
+<?php if (isset($_SESSION['success_message'])): ?>
+Swal.fire({
+    title: 'Berhasil!',
+    text: '<?php echo $_SESSION['success_message']; ?>',
+    icon: 'success',
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#3B82F6'
+});
+<?php unset($_SESSION['success_message']); endif; ?>
 </script>
 
 <?php require_once '../includes/footer.php'; ?> 

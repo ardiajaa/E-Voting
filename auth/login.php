@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = 'user';
+            $_SESSION['show_welcome'] = true;
 
             // Catat login berhasil
             $stmt = $pdo->prepare("INSERT INTO login_history (user_id, user_type, ip_address, location, device, user_agent, attempted_email, status) VALUES (?, 'user', ?, ?, ?, ?, ?, 'success')");
