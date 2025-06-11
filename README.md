@@ -1,6 +1,26 @@
 # E-Voting System for School Organization (OSIS)
 
-A comprehensive and secure electronic voting system built with PHP, specifically designed for school organization (OSIS) elections. This system provides a modern, user-friendly interface with real-time voting statistics and secure authentication.
+> A modern and secure OSIS chairman election system built with PHP. Provides a responsive interface, real-time voting statistics, and a secure authentication system for school OSIS elections.
+
+<div align="center">
+
+![PHP Version](https://img.shields.io/badge/PHP-7.4+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
+![Security](https://img.shields.io/badge/Security-Secure-brightgreen?style=for-the-badge)
+
+</div>
+
+## 🌐 Live Demo
+
+You can see the live demo of this application at: [https://voting-pilketos.rf.gd/](https://voting-pilketos.rf.gd/)
 
 ## 📸 Preview
 
