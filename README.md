@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![PHP Version](https://img.shields.io/badge/PHP-7.4+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![PHP Version](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
@@ -15,12 +15,13 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 ![Security](https://img.shields.io/badge/Security-Secure-brightgreen?style=for-the-badge)
+![Live Demo](https://img.shields.io/badge/Live_Demo-voting--pilketos.rf.gd-blue?style=for-the-badge&logo=google-chrome&logoColor=white)
 
 </div>
 
 ## 🌐 Live Demo
 
-You can see the live demo of this application at: [https://voting-pilketos.rf.gd/](https://voting-pilketos.rf.gd/)
+You can see the live demo of this application at:: [https://voting-pilketos.rf.gd/](https://voting-pilketos.rf.gd/)
 
 ## 📸 Preview
 
