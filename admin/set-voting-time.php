@@ -2,6 +2,9 @@
 require_once '../config/database.php';
 session_start();
 
+// Set zona waktu ke Asia/Jakarta
+date_default_timezone_set('Asia/Jakarta');
+
 // Cek apakah user adalah admin
 if (!isset($_SESSION['admin_id'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
@@ -14,8 +17,8 @@ if (!isset($_POST['start_time']) || !isset($_POST['end_time'])) {
     exit;
 }
 
-$start_time = $_POST['start_time'];
-$end_time = $_POST['end_time'];
+$start_time = date('Y-m-d H:i:s', strtotime($_POST['start_time']));
+$end_time = date('Y-m-d H:i:s', strtotime($_POST['end_time']));
 
 // Validasi format waktu
 if (!strtotime($start_time) || !strtotime($end_time)) {

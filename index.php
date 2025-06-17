@@ -1,6 +1,9 @@
 <?php
 require_once 'config/database.php';
 
+// Set zona waktu ke Asia/Jakarta
+date_default_timezone_set('Asia/Jakarta');
+
 // Ambil data settings
 $stmt = $pdo->query("SELECT * FROM settings ORDER BY id DESC LIMIT 1");
 $settings = $stmt->fetch();
@@ -14,14 +17,14 @@ $stmt = $pdo->query("SELECT * FROM voting_time ORDER BY id DESC LIMIT 1");
 $voting_time = $stmt->fetch();
 
 // Cek status voting
-$now = new DateTime();
+$now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 $voting_status = 'belum_mulai';
 $time_left = '';
 $can_vote = false;
 
 if ($voting_time) {
-    $start_time = new DateTime($voting_time['start_time']);
-    $end_time = new DateTime($voting_time['end_time']);
+    $start_time = new DateTime($voting_time['start_time'], new DateTimeZone('Asia/Jakarta'));
+    $end_time = new DateTime($voting_time['end_time'], new DateTimeZone('Asia/Jakarta'));
     
     if ($now < $start_time) {
         $voting_status = 'belum_mulai';
@@ -166,8 +169,10 @@ if ($voting_time) {
                             <span class="text-yellow-600 font-medium">Pemilihan Belum Dimulai</span>
                         </div>
                         <?php if ($time_left): ?>
-                            <span class="text-gray-600">
-                                Dimulai dalam: <?php echo $time_left->format('%d hari %h jam %i menit'); ?>
+                            <span class="text-gray-600" id="countdown-timer">
+                                <span data-target="<?php echo $start_time->format('Y-m-d H:i:s'); ?>">
+                                    <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
+                                </span>
                             </span>
                         <?php endif; ?>
                     <?php elseif ($voting_status == 'sedang_berlangsung'): ?>
@@ -176,8 +181,10 @@ if ($voting_time) {
                             <span class="text-green-600 font-medium">Pemilihan Sedang Berlangsung</span>
                         </div>
                         <?php if ($time_left): ?>
-                            <span class="text-gray-600">
-                                Sisa waktu: <?php echo $time_left->format('%d hari %h jam %i menit'); ?>
+                            <span class="text-gray-600" id="countdown-timer">
+                                <span data-target="<?php echo $end_time->format('Y-m-d H:i:s'); ?>">
+                                    <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
+                                </span>
                             </span>
                         <?php endif; ?>
                     <?php else: ?>
@@ -305,6 +312,33 @@ if ($voting_time) {
             once: true,
             offset: 50
         });
+
+        // Countdown Timer
+        function updateCountdown() {
+            const countdownElements = document.querySelectorAll('[data-target]');
+            
+            countdownElements.forEach(element => {
+                const targetDate = new Date(element.getAttribute('data-target')).getTime();
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) {
+                    element.innerHTML = "Waktu Habis";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                element.innerHTML = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+            });
+        }
+
+        // Update countdown setiap detik
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Panggil sekali untuk inisialisasi
     </script>
 </body>
 </html>

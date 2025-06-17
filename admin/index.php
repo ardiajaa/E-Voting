@@ -237,8 +237,10 @@ if ($voting_time) {
                                 <span>Belum Dimulai</span>
                             </span>
                             <?php if ($time_left): ?>
-                                <span class="text-xs sm:text-sm text-gray-600">
-                                    Dimulai dalam: <?php echo $time_left->format('%d hari %h jam %i menit'); ?>
+                                <span class="text-xs sm:text-sm text-gray-600" id="countdown-timer">
+                                    <span data-target="<?php echo $voting_status == 'belum_mulai' ? $start_time->format('Y-m-d H:i:s') : $end_time->format('Y-m-d H:i:s'); ?>">
+                                        <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
+                                    </span>
                                 </span>
                             <?php endif; ?>
                         <?php elseif ($voting_status == 'sedang_berlangsung'): ?>
@@ -247,8 +249,10 @@ if ($voting_time) {
                                 <span>Sedang Berlangsung</span>
                             </span>
                             <?php if ($time_left): ?>
-                                <span class="text-xs sm:text-sm text-gray-600">
-                                    Sisa waktu: <?php echo $time_left->format('%d hari %h jam %i menit'); ?>
+                                <span class="text-xs sm:text-sm text-gray-600" id="countdown-timer">
+                                    <span data-target="<?php echo $voting_status == 'belum_mulai' ? $start_time->format('Y-m-d H:i:s') : $end_time->format('Y-m-d H:i:s'); ?>">
+                                        <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
+                                    </span>
                                 </span>
                             <?php endif; ?>
                         <?php else: ?>
@@ -511,6 +515,33 @@ AOS.init({
     once: true,
     offset: 50
 });
+
+// Countdown Timer
+function updateCountdown() {
+    const countdownElements = document.querySelectorAll('[data-target]');
+    
+    countdownElements.forEach(element => {
+        const targetDate = new Date(element.getAttribute('data-target')).getTime();
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            element.innerHTML = "Waktu Habis";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        element.innerHTML = `${days} hari ${hours} jam ${minutes} menit ${seconds} detik`;
+    });
+}
+
+// Update countdown setiap detik
+setInterval(updateCountdown, 1000);
+updateCountdown(); // Panggil sekali untuk inisialisasi
 
 // Data untuk grafik
 const votingStatusData = {
