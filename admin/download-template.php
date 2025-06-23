@@ -306,6 +306,41 @@ require_once '../includes/admin-header.php';
         transform: translateY(1px);
     }
 }
+
+.download-button.main-download {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    margin-bottom: 0.5rem;
+}
+.download-button.back-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    margin-top: 0.5rem;
+}
+.download-button.main-download:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+}
+.download-button.back-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);
+}
+.download-button .download-icon {
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
+    transition: transform 0.3s;
+}
+.download-button:hover .download-icon {
+    transform: translateY(2px) scale(1.15);
+}
+@media (max-width: 640px) {
+    .download-button {
+        font-size: 0.95rem;
+        padding: 0.75rem 1rem;
+    }
+    .download-button .download-icon {
+        margin-right: 0.5rem;
+        font-size: 1rem;
+    }
+}
 </style>
         
 <div class="page-container">
@@ -337,9 +372,13 @@ require_once '../includes/admin-header.php';
                 </li>
             </ul>
 
-            <a href="?download=1" class="download-button" data-aos="fade-up" data-aos-delay="600">
+            <a href="?download=1" class="download-button main-download" data-aos="fade-up" data-aos-delay="600">
                 <i class="fas fa-download download-icon"></i>
                 <span>Download Template Excel</span>
+            </a>
+            <a href="users.php" class="download-button back-btn" data-aos="fade-up" data-aos-delay="700">
+                <i class="fas fa-arrow-left download-icon"></i>
+                <span>Kembali ke Manajemen User</span>
             </a>
         </div>
     </div>

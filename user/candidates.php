@@ -10,6 +10,14 @@ $user = $stmt->fetch();
 // Ambil data kandidat
 $stmt = $pdo->query("SELECT * FROM candidates");
 $candidates = $stmt->fetchAll();
+
+// Ambil data kandidat yang dipilih jika ada parameter voted dan id
+$selected_candidate = null;
+if (isset($_GET['voted'], $_GET['id'])) {
+    $stmt = $pdo->prepare("SELECT * FROM candidates WHERE id = ?");
+    $stmt->execute([$_GET['id']]);
+    $selected_candidate = $stmt->fetch();
+}
 ?>
 
 <!-- Tambahkan AOS CSS dan JS -->
@@ -394,6 +402,41 @@ document.addEventListener('scroll', function() {
         }
     });
 });
+
+// Notifikasi berhasil memilih
+<?php if ($selected_candidate): ?>
+Swal.fire({
+    title: 'Anda Berhasil Memilih!',
+    html: `
+        <div class="flex flex-col items-center justify-center">
+            <img src="../assets/images/candidates/<?php echo htmlspecialchars($selected_candidate['foto']); ?>" alt="<?php echo htmlspecialchars($selected_candidate['nama']); ?>" style="width:120px;height:120px;object-fit:cover;border-radius:1rem;margin-bottom:1rem;box-shadow:0 4px 16px rgba(0,0,0,0.12);">
+            <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem; color:#059669;"><?php echo htmlspecialchars($selected_candidate['nama']); ?></h2>
+            <div style="color:#374151;font-size:1rem;margin-bottom:0.5rem;">
+                Kelas <?php echo htmlspecialchars($selected_candidate['kelas']); ?> - Absen <?php echo htmlspecialchars($selected_candidate['absen']); ?>
+            </div>
+            <div style="text-align:left;width:100%;max-width:320px;margin:0 auto;">
+                <div style="margin-bottom:0.5rem;"><b>Visi:</b><br><span style="color:#059669;"><?php echo nl2br(htmlspecialchars($selected_candidate['visi'])); ?></span></div>
+                <div><b>Misi:</b><br><span style="color:#059669;"><?php echo nl2br(htmlspecialchars($selected_candidate['misi'])); ?></span></div>
+            </div>
+        </div>
+    `,
+    icon: 'success',
+    confirmButtonText: 'Tutup',
+    customClass: {
+        popup: 'animate__animated animate__fadeInDown',
+        confirmButton: 'btn-confirm',
+    },
+    buttonsStyling: false,
+    showClass: {
+        popup: 'animate__animated animate__fadeInDown animate__faster'
+    },
+    hideClass: {
+        popup: 'animate__animated animate__fadeOutUp animate__faster'
+    },
+    background: 'rgba(255,255,255,0.98)',
+    backdrop: `rgba(0,0,0,0.4) left top no-repeat`
+});
+<?php endif; ?>
 </script>
 
 <?php require_once '../includes/footer.php'; ?> 

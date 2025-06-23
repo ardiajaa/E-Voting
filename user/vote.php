@@ -33,7 +33,7 @@ try {
     $stmt->execute([$user_id]);
     
     $pdo->commit();
-    header('Location: candidates.php?success=voted');
+    header('Location: candidates.php?voted=1&id=' . $candidate_id);
 } catch (Exception $e) {
     $pdo->rollBack();
     header('Location: candidates.php?error=failed');

@@ -77,7 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     
-    $error = "Email/NIS atau password salah!";
+    $_SESSION['login_error'] = "Email atau password salah!";
+    header('Location: login.php');
+    exit();
 }
 
 // Fungsi untuk mendapatkan lokasi dari IP
@@ -117,6 +119,12 @@ function getDeviceInfo($userAgent) {
 // Ambil data settings
 $stmt = $pdo->query("SELECT * FROM settings ORDER BY id DESC LIMIT 1");
 $settings = $stmt->fetch();
+
+$error = '';
+if (isset($_SESSION['login_error'])) {
+    $error = $_SESSION['login_error'];
+    unset($_SESSION['login_error']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -236,7 +244,7 @@ $settings = $stmt->fetch();
                     <p class="text-gray-600"><?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> - <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? '2023/2024'); ?></p>
                 </div>
                 
-                <?php if (isset($error)): ?>
+                <?php if (!empty($error)): ?>
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 animate__animated animate__fadeIn" role="alert">
                     <div class="flex items-center">
                         <i class="fas fa-exclamation-circle text-xl mr-2"></i>
