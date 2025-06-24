@@ -31,6 +31,15 @@ $candidate_stats = $stmt->fetchAll();
 $stmt = $pdo->query("SELECT * FROM settings ORDER BY id DESC LIMIT 1");
 $settings = $stmt->fetch();
 
+// Ambil data admin yang login
+$admin_id = $_SESSION['admin_id'] ?? null;
+$admin_data = null;
+if ($admin_id) {
+    $stmt = $pdo->prepare("SELECT * FROM admin WHERE id = ?");
+    $stmt->execute([$admin_id]);
+    $admin_data = $stmt->fetch();
+}
+
 // Ambil pengaturan waktu voting
 $stmt = $pdo->query("SELECT * FROM voting_time ORDER BY id DESC LIMIT 1");
 $voting_time = $stmt->fetch();
@@ -63,6 +72,9 @@ if ($voting_time) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Tambahkan SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 /* Custom style untuk background */
@@ -201,6 +213,63 @@ if ($voting_time) {
 @keyframes progress {
     from { width: 100%; }
     to { width: 0%; }
+}
+
+/* Custom styles untuk SweetAlert2 Admin */
+.swal2-popup-custom {
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    max-width: 90% !important;
+    width: 450px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.swal2-title-custom {
+    font-size: 1.5rem !important;
+    color: #1F2937 !important;
+    margin-bottom: 1rem !important;
+    font-weight: 700 !important;
+}
+
+.swal2-html-container-custom {
+    margin: 1rem 0 !important;
+}
+
+.swal2-confirm-button-custom {
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.5rem !important;
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2) !important;
+}
+
+.swal2-confirm-button-custom:hover {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+@media (max-width: 640px) {
+    .swal2-popup-custom {
+        width: 90% !important;
+        padding: 1.5rem !important;
+    }
+    
+    .swal2-title-custom {
+        font-size: 1.25rem !important;
+    }
+    
+    .swal2-html-container-custom {
+        font-size: 0.875rem !important;
+    }
+    
+    .swal2-confirm-button-custom {
+        padding: 0.5rem 1.5rem !important;
+        font-size: 0.875rem !important;
+    }
 }
 </style>
 
@@ -515,6 +584,47 @@ AOS.init({
     once: true,
     offset: 50
 });
+
+// Pop-up selamat datang admin
+<?php if ($admin_data && isset($_SESSION['show_welcome_admin']) && $_SESSION['show_welcome_admin']): ?>
+Swal.fire({
+    title: 'Selamat Datang, Admin!',
+    html: `
+        <div class="text-center">
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Anda dapat mengelola pemilihan ketua OSIS, kandidat, dan user dari dashboard ini.
+                </p>
+            </div>
+        </div>
+    `,
+    icon: 'success',
+    showConfirmButton: true,
+    confirmButtonText: 'Mulai Mengelola',
+    confirmButtonColor: '#3B82F6',
+    timer: 6000,
+    timerProgressBar: true,
+    toast: false,
+    position: 'center',
+    showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+    },
+    customClass: {
+        popup: 'swal2-popup-custom',
+        title: 'swal2-title-custom',
+        htmlContainer: 'swal2-html-container-custom',
+        confirmButton: 'swal2-confirm-button-custom'
+    }
+});
+<?php 
+// Hapus flag setelah menampilkan popup
+unset($_SESSION['show_welcome_admin']);
+endif; 
+?>
 
 // Countdown Timer
 function updateCountdown() {
