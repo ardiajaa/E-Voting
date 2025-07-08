@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# Kecualikan file AJAX/API di admin agar bisa diakses langsung
+RewriteCond %{REQUEST_URI} ^/admin/set-voting-time\.php$
+RewriteRule ^ - [L]
+
 # Hilangkan ekstensi .php
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -789,7 +789,7 @@ document.getElementById('votingTimeForm').addEventListener('submit', async funct
     const formData = new FormData(this);
     
     try {
-        const response = await fetch('set-voting-time.php', {
+        const response = await fetch('set-voting-time', {
             method: 'POST',
             body: formData
         });
