@@ -13,6 +13,11 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
 RewriteRule ^ /%1 [NC,L,R=301]
 
+# Jika file tidak ditemukan, redirect ke 404.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /404.php [L]
+
 # Keamanan - Sembunyikan file .htaccess
 <Files .htaccess>
     Order allow,deny

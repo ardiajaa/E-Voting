@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require_once '../includes/admin-header.php';
 require_once '../config/database.php';
 
@@ -13,15 +14,17 @@ if (isset($_GET['delete'])) {
         $user = $stmt->fetch();
 
         if ($user && $user['has_voted']) {
-            $error = "Tidak dapat menghapus user yang sudah memilih!";
+            $_SESSION['error'] = "Tidak dapat menghapus user yang sudah memilih!";
         } else {
             $stmt = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'user'");
             $stmt->execute([$id]);
-            $success = "User berhasil dihapus!";
+            $_SESSION['success'] = "User berhasil dihapus!";
         }
     } catch (Exception $e) {
-        $error = "Error: " . $e->getMessage();
+        $_SESSION['error'] = "Error: " . $e->getMessage();
     }
+    header('Location: users.php');
+    exit();
 }
 
 // Proses tambah user
@@ -37,7 +40,7 @@ if (isset($_POST['add_user'])) {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE nis = ?");
         $stmt->execute([$nis]);
         if ($stmt->fetchColumn() > 0) {
-            $error = "NIS sudah terdaftar!";
+            $_SESSION['error'] = "NIS sudah terdaftar!";
         } else {
             // Ambil password default dari settings jika tidak ada custom password
             if ($custom_password === null) {
@@ -52,11 +55,13 @@ if (isset($_POST['add_user'])) {
             $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password, role) VALUES (?, ?, ?, ?, ?, 'user')");
             $stmt->execute([$nis, $nama_lengkap, $kelas, $absen, $password]);
 
-            $success = "User berhasil ditambahkan!";
+            $_SESSION['success'] = "User berhasil ditambahkan!";
         }
     } catch (Exception $e) {
-        $error = "Error: " . $e->getMessage();
+        $_SESSION['error'] = "Error: " . $e->getMessage();
     }
+    header('Location: users.php');
+    exit();
 }
 
 // Proses import Excel
@@ -75,6 +80,9 @@ if (isset($_POST['import'])) {
 
         $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password) VALUES (?, ?, ?, ?, ?)");
 
+        $failed_nis = [];
+        $failed_empty = [];
+        $rowNum = 2;
         foreach ($worksheet->getRowIterator(2) as $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
@@ -84,15 +92,44 @@ if (isset($_POST['import'])) {
                 $data[] = $cell->getValue();
             }
 
-            if (!empty($data[0])) {
-                $password = password_hash($default_password, PASSWORD_DEFAULT);
-                $stmt->execute([$data[0], $data[1], $data[2], $data[3], $password]);
+            // Cek kolom wajib kosong
+            if (empty($data[0]) || empty($data[1]) || empty($data[2]) || empty($data[3])) {
+                $failed_empty[] = $rowNum;
+                $rowNum++;
+                continue;
             }
+
+            // Cek apakah NIS sudah ada
+            $cek = $pdo->prepare("SELECT COUNT(*) FROM users WHERE nis = ?");
+            $cek->execute([$data[0]]);
+            if ($cek->fetchColumn() > 0) {
+                $failed_nis[] = $data[0];
+                $rowNum++;
+                continue;
+            }
+            $password = password_hash($default_password, PASSWORD_DEFAULT);
+            $stmt->execute([$data[0], $data[1], $data[2], $data[3], $password]);
+            $rowNum++;
         }
 
-        $success = "Data berhasil diimport!";
+        $errorMsg = [];
+        if (count($failed_nis) > 0) {
+            $errorMsg[] = "Beberapa NIS sudah terdaftar dan tidak diimport: " . implode(", ", $failed_nis);
+        }
+        if (count($failed_empty) > 0) {
+            $errorMsg[] = "Baris berikut tidak diimport karena ada kolom kosong: " . implode(", ", $failed_empty);
+        }
+        if (count($errorMsg) > 0) {
+            $_SESSION['error'] = implode('<br>', $errorMsg);
+        } else {
+            $_SESSION['success'] = "Data berhasil diimport!";
+        }
+        header('Location: users.php');
+        exit();
     } catch (Exception $e) {
-        $error = "Error: " . $e->getMessage();
+        $_SESSION['error'] = "Terjadi kesalahan saat import data!";
+        header('Location: users.php');
+        exit();
     }
 }
 
@@ -123,6 +160,11 @@ $total_pages = ceil($total_records / $show_entries);
 $stmt = $pdo->prepare("SELECT * FROM users $search_condition ORDER BY id DESC LIMIT $show_entries OFFSET $offset");
 $stmt->execute($params);
 $users = $stmt->fetchAll();
+
+// Ambil notifikasi dari session (flash message)
+$success = isset($_SESSION['success']) ? $_SESSION['success'] : null;
+$error = isset($_SESSION['error']) ? $_SESSION['error'] : null;
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
 
 <!-- Tambahkan AOS CSS dan JS -->
@@ -708,7 +750,7 @@ $users = $stmt->fetchAll();
                 </form>
             </div>
 
-            <?php if (isset($success)): ?>
+            <?php if ($success): ?>
                 <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded mb-4" role="alert"
                     data-aos="fade-right">
                     <div class="flex items-center">
@@ -718,7 +760,7 @@ $users = $stmt->fetchAll();
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($error)): ?>
+            <?php if ($error): ?>
                 <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-4" role="alert"
                     data-aos="fade-right">
                     <div class="flex items-center">
@@ -1020,4 +1062,7 @@ $users = $stmt->fetchAll();
     }
 </script>
 
+<?php
+ob_end_flush();
+?>
 <?php require_once '../includes/footer.php'; ?>

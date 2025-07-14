@@ -295,7 +295,7 @@ if (isset($_GET['voted'], $_GET['id'])) {
                     </div>
                     
                     <?php if (!$user['has_voted']): ?>
-                            <form action="vote.php" method="POST" class="text-center" onsubmit="return confirmVote(event)">
+                            <form action="vote" method="POST" class="text-center" onsubmit="return confirmVote(event)">
                         <input type="hidden" name="candidate_id" value="<?php echo $candidate['id']; ?>">
                                 <button type="submit" 
                                         class="vote-button text-white font-bold py-3 px-6 rounded-lg w-full">
@@ -383,7 +383,7 @@ function confirmVote(event) {
 
 // Tambahkan event listener untuk semua form vote
 document.addEventListener('DOMContentLoaded', function() {
-    const voteForms = document.querySelectorAll('form[action="vote.php"]');
+    const voteForms = document.querySelectorAll('form[action="vote"]');
     voteForms.forEach(form => {
         form.addEventListener('submit', confirmVote);
     });
@@ -413,10 +413,6 @@ Swal.fire({
             <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:0.5rem; color:#059669;"><?php echo htmlspecialchars($selected_candidate['nama']); ?></h2>
             <div style="color:#374151;font-size:1rem;margin-bottom:0.5rem;">
                 Kelas <?php echo htmlspecialchars($selected_candidate['kelas']); ?> - Absen <?php echo htmlspecialchars($selected_candidate['absen']); ?>
-            </div>
-            <div style="text-align:left;width:100%;max-width:320px;margin:0 auto;">
-                <div style="margin-bottom:0.5rem;"><b>Visi:</b><br><span style="color:#059669;"><?php echo nl2br(htmlspecialchars($selected_candidate['visi'])); ?></span></div>
-                <div><b>Misi:</b><br><span style="color:#059669;"><?php echo nl2br(htmlspecialchars($selected_candidate['misi'])); ?></span></div>
             </div>
         </div>
     `,
