@@ -48,14 +48,17 @@ $voting_time = $stmt->fetch();
 $voting_percentage = $total_users > 0 ? ($voted_users / $total_users) * 100 : 0;
 
 // Cek status voting
-$now = new DateTime();
+$now = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 $voting_status = 'belum_mulai';
-$time_left = '';
+$time_left = null;
+$start_time = null;
+$end_time = null;
 
-if ($voting_time) {
-    $start_time = new DateTime($voting_time['start_time']);
-    $end_time = new DateTime($voting_time['end_time']);
+if ($voting_time && !empty($voting_time['start_time']) && !empty($voting_time['end_time'])) {
+    $start_time = new DateTime($voting_time['start_time'], new DateTimeZone('Asia/Jakarta'));
+    $end_time = new DateTime($voting_time['end_time'], new DateTimeZone('Asia/Jakarta'));
     
+    // Bandingkan waktu dengan akurat
     if ($now < $start_time) {
         $voting_status = 'belum_mulai';
         $time_left = $now->diff($start_time);
@@ -64,6 +67,7 @@ if ($voting_time) {
         $time_left = $now->diff($end_time);
     } else {
         $voting_status = 'selesai';
+        $time_left = null;
     }
 }
 ?>
@@ -305,9 +309,9 @@ if ($voting_time) {
                                 <i class="fas fa-clock"></i>
                                 <span>Belum Dimulai</span>
                             </span>
-                            <?php if ($time_left): ?>
+                            <?php if ($time_left && $start_time): ?>
                                 <span class="text-xs sm:text-sm text-gray-600" id="countdown-timer">
-                                    <span data-target="<?php echo $voting_status == 'belum_mulai' ? $start_time->format('Y-m-d H:i:s') : $end_time->format('Y-m-d H:i:s'); ?>">
+                                    <span data-target="<?php echo $start_time->format('Y-m-d H:i:s'); ?>">
                                         <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
                                     </span>
                                 </span>
@@ -317,9 +321,9 @@ if ($voting_time) {
                                 <i class="fas fa-spinner animate-spin"></i>
                                 <span>Sedang Berlangsung</span>
                             </span>
-                            <?php if ($time_left): ?>
+                            <?php if ($time_left && $end_time): ?>
                                 <span class="text-xs sm:text-sm text-gray-600" id="countdown-timer">
-                                    <span data-target="<?php echo $voting_status == 'belum_mulai' ? $start_time->format('Y-m-d H:i:s') : $end_time->format('Y-m-d H:i:s'); ?>">
+                                    <span data-target="<?php echo $end_time->format('Y-m-d H:i:s'); ?>">
                                         <?php echo $time_left->format('%d hari %h jam %i menit %s detik'); ?>
                                     </span>
                                 </span>
@@ -631,9 +635,13 @@ function updateCountdown() {
     const countdownElements = document.querySelectorAll('[data-target]');
     
     countdownElements.forEach(element => {
-        const targetDate = new Date(element.getAttribute('data-target')).getTime();
-        const now = new Date().getTime();
-        const distance = targetDate - now;
+        const targetStr = element.getAttribute('data-target');
+        if (!targetStr) return;
+        
+        // Parse datetime dengan format Y-m-d H:i:s
+        const targetDate = new Date(targetStr.replace(' ', 'T'));
+        const now = new Date();
+        const distance = targetDate.getTime() - now.getTime();
 
         if (distance < 0) {
             element.innerHTML = "Waktu Habis";

@@ -27,6 +27,19 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
+// Proses hapus semua user
+if (isset($_POST['delete_all_users'])) {
+    try {
+        $stmt = $pdo->prepare("DELETE FROM users WHERE role = 'user'");
+        $stmt->execute();
+        $_SESSION['success'] = "Semua user berhasil dihapus!";
+    } catch (Exception $e) {
+        $_SESSION['error'] = "Gagal menghapus semua user!";
+    }
+    header('Location: users.php');
+    exit();
+}
+
 // Proses tambah user
 if (isset($_POST['add_user'])) {
     $nis = $_POST['nis'];
@@ -727,6 +740,12 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <i class="fas fa-user-plus"></i>
                         <span>Tambah User</span>
                     </button>
+                    <form method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA user? Tindakan ini tidak dapat dibatalkan!')" style="display:inline;">
+                        <button type="submit" name="delete_all_users" class="action-button bg-red-500 hover:bg-red-600 text-white">
+                            <i class="fas fa-trash"></i>
+                            <span>Hapus Semua User</span>
+                        </button>
+                    </form>
                 </div>
             </div>
 

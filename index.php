@@ -46,6 +46,40 @@ if ($voting_time) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>" type="image/png">
     <title>Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?></title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<?php echo htmlspecialchars($settings['meta_description'] ?? 'Voting Ketua OSIS '.($settings['nama_sekolah'] ?? 'SMA Negeri 1').' periode '.($settings['tahun_ajaran'] ?? '').'. Pilih calon terbaik untuk masa depan OSIS!'); ?>">
+    <meta name="keywords" content="<?php echo htmlspecialchars($settings['meta_keywords'] ?? 'voting, osis, ketua osis, pemilihan, sekolah, '.$settings['nama_sekolah'].', '.$settings['tahun_ajaran']); ?>">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($settings['meta_description'] ?? 'Voting Ketua OSIS '.($settings['nama_sekolah'] ?? 'SMA Negeri 1').' periode '.($settings['tahun_ajaran'] ?? '').'. Pilih calon terbaik untuk masa depan OSIS!'); ?>">
+    <meta property="og:image" content="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>">
+    <meta property="og:url" content="<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?> <?php echo htmlspecialchars($settings['tahun_ajaran'] ?? ''); ?>">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($settings['meta_description'] ?? 'Voting Ketua OSIS '.($settings['nama_sekolah'] ?? 'SMA Negeri 1').' periode '.($settings['tahun_ajaran'] ?? '').'. Pilih calon terbaik untuk masa depan OSIS!'); ?>">
+    <meta name="twitter:image" content="<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>">
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Pemilihan Ketua OSIS <?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?>",
+      "url": "<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>",
+      "description": "<?php echo htmlspecialchars($settings['meta_description'] ?? 'Voting Ketua OSIS '.($settings['nama_sekolah'] ?? 'SMA Negeri 1').' periode '.($settings['tahun_ajaran'] ?? '').'. Pilih calon terbaik untuk masa depan OSIS!'); ?>",
+      "publisher": {
+        "@type": "Organization",
+        "name": "<?php echo htmlspecialchars($settings['nama_sekolah'] ?? 'SMA Negeri 1'); ?>",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "<?php echo !empty($settings['logo']) ? '../uploads/' . htmlspecialchars($settings['logo']) : '../assets/images/placeholder.png'; ?>"
+        }
+      }
+    }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
