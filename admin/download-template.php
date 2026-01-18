@@ -53,357 +53,111 @@ if (isset($_GET['download'])) {
 require_once '../includes/admin-header.php';
 ?>
 
-<style>
-.page-container {
-    min-height: calc(100vh - 4rem);
-    background-color: #f3f4f6;
-    padding: 1rem;
-}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Card Container -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header dengan gradient -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
+                    <i class="fas fa-file-excel text-3xl text-white"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Template Import User</h1>
+                <p class="text-blue-100 text-sm sm:text-base">Download template Excel untuk import data user secara massal</p>
+            </div>
 
-@media (min-width: 640px) {
-    .page-container {
-        padding: 2rem;
-    }
-}
+            <!-- Content -->
+            <div class="px-6 py-8">
+                <!-- Info Box -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+                    <p class="text-sm text-gray-700">
+                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                        Template ini sudah berisi format kolom yang diperlukan. Isi data sesuai format yang ada.
+                    </p>
+                </div>
 
-.content-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-    padding: 1.5rem;
-    margin: 0 auto;
-    max-width: 100%;
-}
+                <!-- List Kolom -->
+                <div class="space-y-3 mb-8">
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-id-card text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">NIS</p>
+                            <p class="text-sm text-gray-500">Nomor Induk Siswa</p>
+                        </div>
+                    </div>
 
-@media (min-width: 640px) {
-    .content-card {
-        padding: 2rem;
-    }
-}
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">Nama Lengkap</p>
+                            <p class="text-sm text-gray-500">Nama lengkap siswa</p>
+                        </div>
+                    </div>
 
-@media (min-width: 768px) {
-    .content-card {
-        padding: 2.5rem;
-    }
-}
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-chalkboard text-purple-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">Kelas</p>
+                            <p class="text-sm text-gray-500">Contoh: X TKJ 1</p>
+                        </div>
+                    </div>
 
-.content-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-sort-numeric-up text-orange-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">Absen</p>
+                            <p class="text-sm text-gray-500">Nomor absen siswa</p>
+                        </div>
+                    </div>
+                </div>
 
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-}
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <a href="?download=1" 
+                       class="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-center">
+                        <i class="fas fa-download mr-2"></i>
+                        Download Template Excel
+                    </a>
+                    
+                    <a href="users.php" 
+                       class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Kembali ke Manajemen User
+                    </a>
+                </div>
+            </div>
+        </div>
 
-@media (min-width: 640px) {
-    .page-title {
-        font-size: 1.75rem;
-        text-align: left;
-        width: auto;
-    }
-}
-
-@media (min-width: 768px) {
-    .page-title {
-        font-size: 2rem;
-    }
-}
-
-.page-title::after {
-    content: '';
-    position: absolute;
-    bottom: -0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3rem;
-    height: 0.25rem;
-    background: linear-gradient(90deg, #3b82f6, #2563eb);
-    border-radius: 0.25rem;
-}
-
-@media (min-width: 640px) {
-    .page-title::after {
-        left: 0;
-        transform: none;
-    }
-}
-
-.description {
-    color: #4b5563;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-@media (min-width: 640px) {
-    .description {
-        font-size: 1rem;
-        line-height: 1.75;
-        margin-bottom: 2rem;
-        text-align: left;
-    }
-}
-
-.feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2rem 0;
-}
-
-.feature-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 0;
-    color: #4b5563;
-    font-size: 0.875rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-@media (min-width: 640px) {
-    .feature-item {
-        font-size: 1rem;
-        padding: 1rem 0;
-    }
-}
-
-.feature-item:last-child {
-    border-bottom: none;
-}
-
-.feature-item:hover {
-    transform: translateX(0.5rem);
-    color: #1e293b;
-}
-
-.feature-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: 0.75rem;
-    color: #3b82f6;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-    .feature-icon {
-        width: 2rem;
-        height: 2rem;
-        margin-right: 1rem;
-    }
-}
-
-.feature-item:hover .feature-icon {
-    transform: scale(1.1);
-}
-
-.download-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 0.875rem 1.5rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    border-radius: 0.75rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-}
-
-@media (min-width: 640px) {
-    .download-button {
-        width: auto;
-        padding: 1rem 2rem;
-        font-size: 1rem;
-        border-radius: 1rem;
-    }
-}
-
-.download-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-}
-
-.download-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-right: 0.5rem;
-    transition: transform 0.3s ease;
-}
-
-@media (min-width: 640px) {
-    .download-icon {
-        width: 1.5rem;
-        height: 1.5rem;
-        margin-right: 0.75rem;
-    }
-}
-
-.download-button:hover .download-icon {
-    transform: translateY(2px);
-}
-
-/* Container responsive */
-.container {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-    .container {
-        max-width: 640px;
-    }
-}
-
-@media (min-width: 768px) {
-    .container {
-        max-width: 768px;
-    }
-}
-
-@media (min-width: 1024px) {
-    .container {
-        max-width: 1024px;
-    }
-}
-
-@media (min-width: 1280px) {
-    .container {
-        max-width: 1280px;
-    }
-}
-
-/* Touch device optimizations */
-@media (hover: none) {
-    .content-card:hover {
-        transform: none;
-    }
-    
-    .feature-item:hover {
-        transform: none;
-    }
-    
-    .download-button:hover {
-        transform: none;
-    }
-    
-    .download-button:active {
-        transform: translateY(1px);
-    }
-}
-
-.download-button.main-download {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    margin-bottom: 0.5rem;
-}
-.download-button.back-btn {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    margin-top: 0.5rem;
-}
-.download-button.main-download:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
-}
-.download-button.back-btn:hover {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);
-}
-.download-button .download-icon {
-    margin-right: 0.75rem;
-    font-size: 1.25rem;
-    transition: transform 0.3s;
-}
-.download-button:hover .download-icon {
-    transform: translateY(2px) scale(1.15);
-}
-@media (max-width: 640px) {
-    .download-button {
-        font-size: 0.95rem;
-        padding: 0.75rem 1rem;
-    }
-    .download-button .download-icon {
-        margin-right: 0.5rem;
-        font-size: 1rem;
-    }
-}
-</style>
-        
-<div class="page-container">
-    <div class="container">
-        <div class="content-card" data-aos="fade-up">
-            <h2 class="page-title">Download Template Import User</h2>
-
-            <p class="description" data-aos="fade-up" data-aos-delay="100">
-                Download template Excel untuk import data user. Template ini berisi kolom-kolom yang diperlukan untuk
-                memudahkan proses import data user secara massal.
-            </p>
-
-            <ul class="feature-list">
-                <li class="feature-item" data-aos="fade-up" data-aos-delay="200">
-                    <i class="fas fa-id-card feature-icon"></i>
-                    <span>NIS - Nomor Induk Siswa</span>
+        <!-- Tips Card -->
+        <div class="mt-6 bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500">
+            <h3 class="font-semibold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Tips
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+                    <span>Pastikan format data sesuai dengan contoh yang ada di template</span>
                 </li>
-                <li class="feature-item" data-aos="fade-up" data-aos-delay="300">
-                    <i class="fas fa-user feature-icon"></i>
-                    <span>Nama Lengkap - Nama lengkap siswa</span>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+                    <span>Jangan menghapus atau mengubah nama kolom header</span>
                 </li>
-                <li class="feature-item" data-aos="fade-up" data-aos-delay="400">
-                    <i class="fas fa-chalkboard feature-icon"></i>
-                    <span>Kelas - Kelas siswa (contoh: X TKJ 1)</span>
-                </li>
-                <li class="feature-item" data-aos="fade-up" data-aos-delay="500">
-                    <i class="fas fa-sort-numeric-up feature-icon"></i>
-                    <span>Absen - Nomor absen siswa</span>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+                    <span>Isi semua kolom yang wajib diisi sebelum melakukan import</span>
                 </li>
             </ul>
-
-            <a href="?download=1" class="download-button main-download" data-aos="fade-up" data-aos-delay="600">
-                <i class="fas fa-download download-icon"></i>
-                <span>Download Template Excel</span>
-            </a>
-            <a href="users.php" class="download-button back-btn" data-aos="fade-up" data-aos-delay="700">
-                <i class="fas fa-arrow-left download-icon"></i>
-                <span>Kembali ke Manajemen User</span>
-            </a>
         </div>
     </div>
 </div>
-
-<script>
-// Inisialisasi AOS dengan konfigurasi yang lebih baik untuk mobile
-AOS.init({
-    duration: 800,
-    once: true,
-    offset: 50,
-    disable: window.innerWidth < 640 ? true : false,
-    startEvent: 'DOMContentLoaded'
-});
-
-// Optimasi untuk touch devices
-document.addEventListener('DOMContentLoaded', function () {
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
-    if (isTouchDevice) {
-        document.querySelectorAll('.feature-item, .download-button').forEach(element => {
-            element.style.cursor = 'pointer';
-        });
-    }
-});
-</script>
 
 <?php require_once '../includes/footer.php'; ?>
