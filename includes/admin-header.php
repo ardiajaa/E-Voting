@@ -220,28 +220,6 @@ $settings = $stmt->fetch();
         }
     });
 
-    // Tambahkan animasi saat scroll
-    let lastScroll = 0;
-    const nav = document.querySelector('nav');
-    
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll <= 0) {
-            nav.style.transform = 'translateY(0)';
-            return;
-        }
-        
-        if (currentScroll > lastScroll && !nav.classList.contains('scroll-down')) {
-            // Scroll ke bawah
-            nav.style.transform = 'translateY(-100%)';
-        } else if (currentScroll < lastScroll && nav.classList.contains('scroll-down')) {
-            // Scroll ke atas
-            nav.style.transform = 'translateY(0)';
-        }
-        
-        lastScroll = currentScroll;
-    });
     </script>
 </body>
 </html>

@@ -3,6 +3,242 @@ ob_start();
 require_once '../includes/admin-header.php';
 require_once '../config/database.php';
 
+function ensurePasswordConfigColumns($pdo)
+{
+    $columns = [
+        'password_prefix' => "ALTER TABLE settings ADD COLUMN password_prefix VARCHAR(20) DEFAULT 'OSIS'",
+        'password_length' => "ALTER TABLE settings ADD COLUMN password_length INT DEFAULT 10",
+        'require_uppercase' => "ALTER TABLE settings ADD COLUMN require_uppercase TINYINT(1) DEFAULT 1",
+        'require_lowercase' => "ALTER TABLE settings ADD COLUMN require_lowercase TINYINT(1) DEFAULT 1",
+        'require_number' => "ALTER TABLE settings ADD COLUMN require_number TINYINT(1) DEFAULT 1",
+        'require_symbol' => "ALTER TABLE settings ADD COLUMN require_symbol TINYINT(1) DEFAULT 1",
+    ];
+
+    foreach ($columns as $columnName => $alterSql) {
+        $checkStmt = $pdo->prepare("
+            SELECT COUNT(*) 
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'settings'
+              AND COLUMN_NAME = ?
+        ");
+        $checkStmt->execute([$columnName]);
+        $exists = (int) $checkStmt->fetchColumn() > 0;
+
+        if (!$exists) {
+            $pdo->exec($alterSql);
+        }
+    }
+}
+
+function ensureUsersPasswordColumn($pdo)
+{
+    $checkStmt = $pdo->prepare("
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'users'
+          AND COLUMN_NAME = 'generated_password'
+    ");
+    $checkStmt->execute();
+    $exists = (int) $checkStmt->fetchColumn() > 0;
+
+    if (!$exists) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN generated_password VARCHAR(255) DEFAULT NULL AFTER password");
+    }
+}
+
+function getPasswordConfig($pdo)
+{
+    $stmt = $pdo->query("SELECT id, password_prefix, password_length, require_uppercase, require_lowercase, require_number, require_symbol FROM settings ORDER BY id DESC LIMIT 1");
+    $row = $stmt->fetch();
+
+    return [
+        'settings_id' => $row['id'] ?? null,
+        'prefix' => $row['password_prefix'] ?? 'OSIS',
+        'length' => max(8, (int) ($row['password_length'] ?? 10)),
+        'require_uppercase' => (int) ($row['require_uppercase'] ?? 1),
+        'require_lowercase' => (int) ($row['require_lowercase'] ?? 1),
+        'require_number' => (int) ($row['require_number'] ?? 1),
+        'require_symbol' => (int) ($row['require_symbol'] ?? 1),
+    ];
+}
+
+function randomChar($pool)
+{
+    return $pool[random_int(0, strlen($pool) - 1)];
+}
+
+function backfillOldUsersPassword($pdo, $config)
+{
+    $existingStmt = $pdo->query("SELECT generated_password FROM users WHERE role = 'user' AND generated_password IS NOT NULL AND generated_password != ''");
+    $existingPasswords = $existingStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $stmt = $pdo->query("SELECT id, nis FROM users WHERE role = 'user' AND (generated_password IS NULL OR generated_password = '')");
+    $oldUsers = $stmt->fetchAll();
+
+    if (empty($oldUsers)) {
+        return 0;
+    }
+
+    $updateStmt = $pdo->prepare("UPDATE users SET password = ?, generated_password = ? WHERE id = ?");
+    foreach ($oldUsers as $oldUser) {
+        $generatedPassword = generateUniquePassword($oldUser['nis'], $config, $existingPasswords);
+        $hashedPassword = password_hash($generatedPassword, PASSWORD_DEFAULT);
+        $updateStmt->execute([$hashedPassword, $generatedPassword, $oldUser['id']]);
+    }
+
+    return count($oldUsers);
+}
+
+function generateUniquePassword($nis, $config, &$existingPasswords = [])
+{
+    $prefix = (string) ($config['prefix'] ?? 'OSIS');
+    $totalLength = max(8, (int) ($config['length'] ?? 10));
+    $suffixLength = max(1, $totalLength - strlen($prefix));
+
+    $upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    $lower = 'abcdefghjkmnpqrstuvwxyz';
+    $number = '23456789';
+    $symbol = '!@#$%^&*';
+
+    $requiredChars = [];
+    $allPools = '';
+
+    if (!empty($config['require_uppercase'])) {
+        $requiredChars[] = randomChar($upper);
+        $allPools .= $upper;
+    }
+    if (!empty($config['require_lowercase'])) {
+        $requiredChars[] = randomChar($lower);
+        $allPools .= $lower;
+    }
+    if (!empty($config['require_number'])) {
+        $requiredChars[] = randomChar($number);
+        $allPools .= $number;
+    }
+    if (!empty($config['require_symbol'])) {
+        $requiredChars[] = randomChar($symbol);
+        $allPools .= $symbol;
+    }
+
+    if ($allPools === '') {
+        $allPools = $upper . $lower . $number;
+    }
+
+    $suffixLength = max($suffixLength, count($requiredChars));
+
+    do {
+        $nisPart = substr(preg_replace('/\D/', '', (string) $nis), -4);
+        $body = str_split($nisPart);
+        foreach ($requiredChars as $ch) {
+            $body[] = $ch;
+        }
+
+        while (count($body) < $suffixLength) {
+            $body[] = randomChar($allPools);
+        }
+
+        shuffle($body);
+        $suffix = substr(implode('', $body), 0, $suffixLength);
+        $password = $prefix . $suffix;
+    } while (in_array($password, $existingPasswords, true));
+
+    $existingPasswords[] = $password;
+    return $password;
+}
+
+ensurePasswordConfigColumns($pdo);
+ensureUsersPasswordColumn($pdo);
+$passwordConfig = getPasswordConfig($pdo);
+$autoGeneratedCount = backfillOldUsersPassword($pdo, $passwordConfig);
+
+if (isset($_POST['save_password_config'])) {
+    try {
+        $prefix = strtoupper(trim($_POST['password_prefix'] ?? 'OSIS'));
+        $prefix = preg_replace('/[^A-Z0-9]/', '', $prefix);
+        $prefix = substr($prefix, 0, 12);
+        if ($prefix === '') {
+            $prefix = 'OSIS';
+        }
+
+        $length = (int) ($_POST['password_length'] ?? 10);
+        $length = max(8, min(32, $length));
+
+        $requireUpper = isset($_POST['require_uppercase']) ? 1 : 0;
+        $requireLower = isset($_POST['require_lowercase']) ? 1 : 0;
+        $requireNumber = isset($_POST['require_number']) ? 1 : 0;
+        $requireSymbol = isset($_POST['require_symbol']) ? 1 : 0;
+
+        if ($requireUpper + $requireLower + $requireNumber + $requireSymbol === 0) {
+            $_SESSION['error'] = "Minimal satu tipe karakter harus dipilih.";
+            header('Location: users.php');
+            exit();
+        }
+
+        if (strlen($prefix) >= $length) {
+            $_SESSION['error'] = "Panjang password harus lebih besar dari panjang prefix.";
+            header('Location: users.php');
+            exit();
+        }
+
+        $stmt = $pdo->prepare("UPDATE settings SET password_prefix = ?, password_length = ?, require_uppercase = ?, require_lowercase = ?, require_number = ?, require_symbol = ? WHERE id = ?");
+        $stmt->execute([$prefix, $length, $requireUpper, $requireLower, $requireNumber, $requireSymbol, $passwordConfig['settings_id']]);
+        $_SESSION['success'] = "Pengaturan generate password berhasil disimpan.";
+    } catch (Exception $e) {
+        $_SESSION['error'] = "Gagal menyimpan pengaturan password.";
+    }
+    header('Location: users.php');
+    exit();
+}
+
+if (isset($_GET['download_credentials'])) {
+    $stmt = $pdo->query("SELECT nis, nama_lengkap, kelas, absen, generated_password FROM users WHERE role = 'user' ORDER BY id DESC");
+    $credentialRows = $stmt->fetchAll();
+
+    if (empty($credentialRows)) {
+        $_SESSION['error'] = "Belum ada data password yang bisa diunduh.";
+        header('Location: users.php');
+        exit();
+    }
+
+    require_once '../vendor/autoload.php';
+
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Lampiran Akun User');
+    $sheet->fromArray(['NIS', 'Nama Lengkap', 'Kelas', 'Absen', 'Password'], null, 'A1');
+
+    $rowNum = 2;
+    foreach ($credentialRows as $row) {
+        $sheet->setCellValueExplicit('A' . $rowNum, (string) $row['nis'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+        $sheet->setCellValue('B' . $rowNum, $row['nama_lengkap']);
+        $sheet->setCellValue('C' . $rowNum, $row['kelas']);
+        $sheet->setCellValue('D' . $rowNum, $row['absen']);
+        $sheet->setCellValue('E' . $rowNum, $row['generated_password'] ?: 'Belum digenerate');
+        $rowNum++;
+    }
+
+    foreach (range('A', 'E') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $filename = 'lampiran_akun_user_' . date('Ymd_His') . '.xlsx';
+
+    // Pastikan tidak ada output HTML/whitespace yang ikut terkirim
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit();
+}
+
 // Proses hapus user
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
@@ -46,7 +282,6 @@ if (isset($_POST['add_user'])) {
     $nama_lengkap = $_POST['nama_lengkap'];
     $kelas = $_POST['kelas'];
     $absen = $_POST['absen'];
-    $custom_password = !empty($_POST['password']) ? $_POST['password'] : null;
 
     try {
         // Cek apakah NIS sudah ada
@@ -55,20 +290,14 @@ if (isset($_POST['add_user'])) {
         if ($stmt->fetchColumn() > 0) {
             $_SESSION['error'] = "NIS sudah terdaftar!";
         } else {
-            // Ambil password default dari settings jika tidak ada custom password
-            if ($custom_password === null) {
-                $stmt = $pdo->query("SELECT default_password FROM settings ORDER BY id DESC LIMIT 1");
-                $settings = $stmt->fetch();
-                $password = password_hash($settings['default_password'] ?? 'rahasia', PASSWORD_DEFAULT);
-            } else {
-                $password = password_hash($custom_password, PASSWORD_DEFAULT);
-            }
+            $generatedPassword = generateUniquePassword($nis, $passwordConfig);
+            $password = password_hash($generatedPassword, PASSWORD_DEFAULT);
 
             // Insert user baru
-            $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password, role) VALUES (?, ?, ?, ?, ?, 'user')");
-            $stmt->execute([$nis, $nama_lengkap, $kelas, $absen, $password]);
+            $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password, generated_password, role) VALUES (?, ?, ?, ?, ?, ?, 'user')");
+            $stmt->execute([$nis, $nama_lengkap, $kelas, $absen, $password, $generatedPassword]);
 
-            $_SESSION['success'] = "User berhasil ditambahkan!";
+            $_SESSION['success'] = "User berhasil ditambahkan! Password otomatis sudah dibuat. Silakan unduh lampiran akun.";
         }
     } catch (Exception $e) {
         $_SESSION['error'] = "Error: " . $e->getMessage();
@@ -86,15 +315,11 @@ if (isset($_POST['import'])) {
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
         $worksheet = $spreadsheet->getActiveSheet();
 
-        // Ambil password default dari settings
-        $stmt = $pdo->query("SELECT default_password FROM settings ORDER BY id DESC LIMIT 1");
-        $settings = $stmt->fetch();
-        $default_password = $settings['default_password'] ?? 'rahasia';
-
-        $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (nis, nama_lengkap, kelas, absen, password, generated_password) VALUES (?, ?, ?, ?, ?, ?)");
 
         $failed_nis = [];
         $failed_empty = [];
+        $generatedPasswords = [];
         $rowNum = 2;
         foreach ($worksheet->getRowIterator(2) as $row) {
             $cellIterator = $row->getCellIterator();
@@ -120,8 +345,9 @@ if (isset($_POST['import'])) {
                 $rowNum++;
                 continue;
             }
-            $password = password_hash($default_password, PASSWORD_DEFAULT);
-            $stmt->execute([$data[0], $data[1], $data[2], $data[3], $password]);
+            $generatedPassword = generateUniquePassword($data[0], $passwordConfig, $generatedPasswords);
+            $password = password_hash($generatedPassword, PASSWORD_DEFAULT);
+            $stmt->execute([$data[0], $data[1], $data[2], $data[3], $password, $generatedPassword]);
             $rowNum++;
         }
 
@@ -135,7 +361,7 @@ if (isset($_POST['import'])) {
         if (count($errorMsg) > 0) {
             $_SESSION['error'] = implode('<br>', $errorMsg);
         } else {
-            $_SESSION['success'] = "Data berhasil diimport!";
+            $_SESSION['success'] = "Data berhasil diimport! Password unik untuk setiap user sudah dibuat. Silakan unduh lampiran akun.";
         }
         header('Location: users.php');
         exit();
@@ -726,6 +952,10 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <h2 class="header-title">Manajemen User</h2>
 
                 <div class="action-buttons-group">
+                    <a href="?download_credentials=1" class="action-button bg-indigo-500 hover:bg-indigo-600 text-white">
+                        <i class="fas fa-file-excel"></i>
+                        <span>Download Lampiran Akun</span>
+                    </a>
                     <a href="download-template.php" class="action-button bg-yellow-500 hover:bg-yellow-600 text-white">
                         <i class="fas fa-download"></i>
                         <span>Download Template</span>
@@ -788,6 +1018,61 @@ unset($_SESSION['success'], $_SESSION['error']);
                     </div>
                 </div>
             <?php endif; ?>
+
+            <?php if (!empty($autoGeneratedCount)): ?>
+                <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 rounded mb-4" role="alert"
+                    data-aos="fade-right">
+                    <div class="flex items-center">
+                        <i class="fas fa-key mr-2"></i>
+                        <p><?php echo (int) $autoGeneratedCount; ?> akun lama berhasil digenerate otomatis dan siap diunduh pada Lampiran Akun.</p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+                <h3 class="text-base font-semibold text-slate-700 mb-3">Pengaturan Generate Password</h3>
+                <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label" for="password_prefix">Prefix Depan Password</label>
+                        <input type="text" id="password_prefix" name="password_prefix" class="form-input"
+                            maxlength="12" value="<?php echo htmlspecialchars($passwordConfig['prefix']); ?>"
+                            placeholder="Contoh: OSIS">
+                    </div>
+                    <div>
+                        <label class="form-label" for="password_length">Total Panjang Password</label>
+                        <input type="number" id="password_length" name="password_length" class="form-input"
+                            min="8" max="32" value="<?php echo (int) $passwordConfig['length']; ?>">
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="form-label mb-2">Komposisi Karakter</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-slate-700">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="require_uppercase" <?php echo $passwordConfig['require_uppercase'] ? 'checked' : ''; ?>>
+                                Huruf Besar
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="require_lowercase" <?php echo $passwordConfig['require_lowercase'] ? 'checked' : ''; ?>>
+                                Huruf Kecil
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="require_number" <?php echo $passwordConfig['require_number'] ? 'checked' : ''; ?>>
+                                Angka
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" name="require_symbol" <?php echo $passwordConfig['require_symbol'] ? 'checked' : ''; ?>>
+                                Simbol
+                            </label>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" name="save_password_config"
+                            class="action-button bg-slate-700 hover:bg-slate-800 text-white">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Simpan Pengaturan Password</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
 
             <div class="table-container">
                 <table class="custom-table">
@@ -980,17 +1265,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <input type="number" name="absen" id="absen" required class="form-input">
                 </div>
                 <div class="mb-4">
-                    <label class="form-label" for="password">
-                        Password (Opsional)
-                        <span class="text-sm text-gray-500">- Kosongkan untuk menggunakan password default</span>
-                    </label>
-                    <div class="relative">
-                        <input type="password" name="password" id="password" class="form-input pr-10"
-                            placeholder="Kosongkan untuk password default">
-                        <button type="button" onclick="togglePassword()"
-                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-500 transition-colors">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-3 rounded">
+                        Password akan digenerate otomatis dan unik untuk user ini.
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3">
@@ -1065,20 +1341,6 @@ unset($_SESSION['success'], $_SESSION['error']);
         });
     });
 
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const icon = document.querySelector('#password + button i');
-
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    }
 </script>
 
 <?php

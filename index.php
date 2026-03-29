@@ -347,7 +347,6 @@ if ($voting_time) {
             offset: 50
         });
 
-        // Countdown Timer
         function updateCountdown() {
             const countdownElements = document.querySelectorAll('[data-target]');
             
@@ -370,9 +369,8 @@ if ($voting_time) {
             });
         }
 
-        // Update countdown setiap detik
         setInterval(updateCountdown, 1000);
-        updateCountdown(); // Panggil sekali untuk inisialisasi
+        updateCountdown();
     </script>
 </body>
 </html>

@@ -205,7 +205,7 @@ $settings = $stmt->fetch();
                 </div>
 
                 <!-- Tambahkan section baru setelah Visi Misi Section -->
-                <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6 transform transition-all duration-300 hover:shadow-2xl"
+                <!-- <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6 transform transition-all duration-300 hover:shadow-2xl"
                     data-aos="fade-up" data-aos-delay="300">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-key text-blue-500 mr-2"></i>
@@ -232,7 +232,7 @@ $settings = $stmt->fetch();
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Submit Button -->
                 <div class="flex justify-end" data-aos="fade-up" data-aos-delay="300">
